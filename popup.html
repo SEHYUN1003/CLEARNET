@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClearNet 확장 프로그램</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            width: 380px;
+            height: 500px;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-active {
+            background-color: #10B981;
+            animation: pulse-green 2s infinite;
+        }
+        
+        .status-inactive {
+            background-color: #EF4444;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .scan-pulse {
+            animation: scan-pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes scan-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .risk-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .risk-safe { background-color: #10B981; }
+        .risk-low { background-color: #F59E0B; }
+        .risk-medium { background-color: #F97316; }
+        .risk-high { background-color: #EF4444; }
+        .risk-critical { background-color: #7C2D12; }
+        
+        .popup-section {
+            border-bottom: 1px solid #E5E7EB;
+            padding: 12px 16px;
+        }
+        
+        .popup-section:last-child {
+            border-bottom: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 8px 4px;
+            background: #F9FAFB;
+            border-radius: 6px;
+        }
+        
+        .quick-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            background: #F3F4F6;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: #374151;
+        }
+        
+        .quick-action:hover {
+            background: #E5E7EB;
+            transform: translateY(-1px);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #10B981;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .notification.success { background-color: #10B981; }
+        .notification.warning { background-color: #F59E0B; }
+        .notification.error { background-color: #EF4444; }
+        
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    
+    <!-- 헤더 -->
+    <div class="popup-section bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <i class="fas fa-shield-alt text-xl mr-2"></i>
+                <span class="font-bold text-sm">ClearNet</span>
+            </div>
+            <div class="flex items-center text-xs">
+                <div class="status-dot status-active" id="statusDot"></div>
+                <span id="statusText">활성화됨</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 현재 페이지 정보 -->
+    <div class="popup-section">
+        <div class="flex items-center mb-3">
+            <img id="currentFavicon" src="" alt="" class="w-4 h-4 mr-2" style="display: none;">
+            <i class="fas fa-globe text-gray-400 mr-2"></i>
+            <span class="text-sm font-medium text-gray-700">현재 페이지</span>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-3 mb-3">
+            <div id="currentTitle" class="text-sm font-medium text-gray-900 mb-1 truncate">
+                페이지 로딩 중...
+            </div>
+            <div id="currentUrl" class="text-xs text-gray-600 truncate">
+                URL 확인 중...
+            </div>
+        </div>
+        
+        <!-- 스캔 결과 -->
+        <div id="scanResult" class="mb-3" style="display: none;">
+            <!-- 스캔 결과가 여기에 표시됩니다 -->
+        </div>
+        
+        <!-- 스캔 버튼 -->
+        <button id="scanCurrentPage" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+            <i class="fas fa-search mr-2"></i>
+            현재 페이지 스캔
+        </button>
+    </div>
+    
+    <!-- 보호 상태 -->
+    <div class="popup-section">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-sm font-medium text-gray-700 mb-1">실시간 보호</div>
+                <div class="text-xs text-gray-500" id="protectionStatus">
+                    악성 사이트 자동 차단
+                </div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggleProtection" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- 빠른 통계 -->
+    <div class="popup-section">
+        <div class="text-sm font-medium text-gray-700 mb-3">보호 현황</div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="text-lg font-bold text-blue-600" id="totalScans">0</div>
+                <div class="text-xs text-gray-600">총 스캔</div>
+            </div>
+            <div class="stat-item">
+                <div class="text-lg font-bold text-red-600" id="threatsBlocked">0</div>
+                <div class="text-xs text-gray-600">위협 차단</div>
+            </div>
+            <div class="stat-item">
+                <div class="text-lg font-bold text-green-600" id="todayScans">0</div>
+                <div class="text-xs text-gray-600">오늘 스캔</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 빠른 액션 -->
+    <div class="popup-section">
+        <div class="text-sm font-medium text-gray-700 mb-3">빠른 액션</div>
+        <div class="grid grid-cols-2 gap-2">
+            <button id="openMainApp" class="quick-action">
+                <i class="fas fa-external-link-alt text-sm mr-2"></i>
+                <span class="text-xs">메인 앱</span>
+            </button>
+            
+            <button id="openSettings" class="quick-action">
+                <i class="fas fa-cog text-sm mr-2"></i>
+                <span class="text-xs">설정</span>
+            </button>
+            
+            <button id="viewHistory" class="quick-action">
+                <i class="fas fa-history text-sm mr-2"></i>
+                <span class="text-xs">기록</span>
+            </button>
+            
+            <button id="openHelp" class="quick-action">
+                <i class="fas fa-question-circle text-sm mr-2"></i>
+                <span class="text-xs">도움말</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- 최근 활동 -->
+    <div class="popup-section">
+        <div class="text-sm font-medium text-gray-700 mb-3">최근 활동</div>
+        <div id="recentActivity" class="space-y-2">
+            <div class="text-xs text-gray-500 text-center py-4">
+                활동 내역을 로드하는 중...
+            </div>
+        </div>
+    </div>
+    
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay" class="loading">
+        <i class="fas fa-spinner fa-spin text-blue-600 mr-2"></i>
+        <span class="text-sm text-gray-600">처리 중...</span>
+    </div>
+    
+    <!-- 알림 영역 -->
+    <div id="notification" class="notification"></div>
+
+    <!-- 모달들 -->
+    
+    <!-- 설정 모달 -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-xl w-80 max-h-96 overflow-y-auto">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">설정</h3>
+                    <button id="closeSettingsModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- 자동 스캔 -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-sm font-medium text-gray-700">자동 스캔</div>
+                            <div class="text-xs text-gray-500">페이지 로드 시 자동 분석</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoScan" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- 알림 설정 -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-sm font-medium text-gray-700">데스크톱 알림</div>
+                            <div class="text-xs text-gray-500">위험 탐지 시 알림</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="notifications" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- 차단 레벨 -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-700 mb-2">차단 민감도</div>
+                        <select id="blockLevel" class="w-full text-xs border border-gray-300 rounded px-2 py-1">
+                            <option value="low">낮음 (80점 이상)</option>
+                            <option value="medium" selected>보통 (70점 이상)</option>
+                            <option value="high">높음 (60점 이상)</option>
+                            <option value="strict">엄격 (50점 이상)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 데이터 관리 -->
+                    <div class="pt-2 border-t border-gray-200">
+                        <button id="clearData" class="w-full text-left text-xs text-red-600 hover:text-red-800 py-1">
+                            <i class="fas fa-trash mr-2"></i>
+                            스캔 기록 삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 도움말 모달 -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-xl w-80 max-h-96 overflow-y-auto">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">도움말</h3>
+                    <button id="closeHelpModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3 text-sm text-gray-700">
+                    <div>
+                        <h4 class="font-medium mb-1">🛡️ 실시간 보호</h4>
+                        <p class="text-xs text-gray-600">악성 사이트 자동 탐지 및 차단</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium mb-1">🔍 URL 스캔</h4>
+                        <p class="text-xs text-gray-600">의심스러운 링크의 안전성 검사</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium mb-1">📊 위험도 평가</h4>
+                        <p class="text-xs text-gray-600">0-100점 척도로 위험도 측정</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium mb-1">🚨 신고 기능</h4>
+                        <p class="text-xs text-gray-600">새로운 위협 사이트 신고</p>
+                    </div>
+                    
+                    <div class="pt-2 border-t border-gray-200">
+                        <div class="text-xs text-gray-500">
+                            <strong>버전:</strong> 1.0.0<br>
+                            <strong>업데이트:</strong> 2024-01-01
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 신고 모달 -->
+    <div id="reportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-xl w-80">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">빠른 신고</h3>
+                    <button id="closeReportModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">사기 유형</label>
+                        <select id="reportModalType" class="w-full text-sm border border-gray-300 rounded px-3 py-1">
+                            <option value="phishing">피싱 (개인정보 탈취)</option>
+                            <option value="scam">스캠 (금융 사기)</option>
+                            <option value="malware">악성코드 유포</option>
+                            <option value="fake-shop">가짜 쇼핑몰</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">신고 URL</label>
+                        <input type="url" id="reportModalUrl" 
+                               class="w-full text-sm border border-gray-300 rounded px-3 py-1"
+                               placeholder="신고할 URL">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">설명 (선택사항)</label>
+                        <textarea id="reportModalDescription" rows="2"
+                                  class="w-full text-sm border border-gray-300 rounded px-3 py-1"
+                                  placeholder="상세 설명..."></textarea>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button id="submitReport" 
+                                class="flex-1 bg-red-600 text-white py-2 rounded text-sm hover:bg-red-700 transition-colors">
+                            신고 제출
+                        </button>
+                        <button id="cancelReport" 
+                                class="flex-1 bg-gray-300 text-gray-700 py-2 rounded text-sm hover:bg-gray-400 transition-colors">
+                            취소
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/detector.js"></script>
+    <script src="js/popup.js"></script>
+    
+    <script>
+        // 팝업 전용 추가 스크립트
+        document.addEventListener('DOMContentLoaded', () => {
+            // 모달 닫기 이벤트들
+            ['closeSettingsModal', 'closeHelpModal', 'closeReportModal'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('click', () => {
+                        element.closest('.fixed').style.display = 'none';
+                    });
+                }
+            });
+            
+            // 설정 저장
+            ['autoScan', 'notifications', 'blockLevel'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('change', () => {
+                        localStorage.setItem(`clearnet_${id}`, element.value || element.checked);
+                        showNotification('설정이 저장되었습니다', 'success');
+                    });
+                }
+            });
+            
+            // 데이터 삭제
+            document.getElementById('clearData').addEventListener('click', () => {
+                if (confirm('모든 스캔 기록을 삭제하시겠습니까?')) {
+                    localStorage.removeItem('clearnet_scans');
+                    showNotification('스캔 기록이 삭제되었습니다', 'success');
+                    document.getElementById('settingsModal').style.display = 'none';
+                }
+            });
+        });
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
