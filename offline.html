@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오프라인 - ClearNet</title>
+    
+    <!-- PWA 메타태그 -->
+    <meta name="theme-color" content="#1F2937">
+    <meta name="description" content="ClearNet 오프라인 페이지">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .offline-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .connection-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { background-color: #ef4444; }
+            51%, 100% { background-color: #fca5a5; }
+        }
+        
+        .retry-button {
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        
+        .retry-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .retry-button:active {
+            transform: scale(0.95);
+        }
+        
+        .offline-features {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        
+        .offline-features.expanded {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    
+    <!-- 헤더 -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-xl font-bold text-gray-900">ClearNet</h1>
+                </div>
+                
+                <!-- 연결 상태 표시 -->
+                <div class="flex items-center">
+                    <div class="connection-indicator"></div>
+                    <span class="text-sm text-gray-600">오프라인</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            
+            <!-- 오프라인 아이콘 -->
+            <div class="offline-animation mb-8">
+                <i class="fas fa-wifi text-6xl text-gray-400 mb-4"></i>
+                <div class="relative">
+                    <i class="fas fa-slash text-4xl text-red-500 absolute -top-2 left-1/2 transform -translate-x-1/2"></i>
+                </div>
+            </div>
+            
+            <!-- 메인 메시지 -->
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                인터넷 연결이 끊어졌습니다
+            </h2>
+            
+            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                현재 인터넷에 연결되어 있지 않습니다. 
+                <br>연결이 복원되면 자동으로 온라인 기능이 활성화됩니다.
+            </p>
+            
+            <!-- 재시도 버튼 -->
+            <button id="retryConnection" 
+                    class="retry-button bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-medium shadow-lg">
+                <i class="fas fa-sync-alt mr-2"></i>
+                연결 다시 시도
+            </button>
+        </div>
+
+        <!-- 오프라인 기능 섹션 -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <div class="flex items-center justify-between mb-6 cursor-pointer" id="offlineFeaturesToggle">
+                <h3 class="text-xl font-semibold text-gray-900">
+                    <i class="fas fa-laptop text-blue-600 mr-3"></i>
+                    오프라인에서도 사용 가능한 기능
+                </h3>
+                <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300" id="toggleIcon"></i>
+            </div>
+            
+            <div class="offline-features" id="offlineFeatures">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- 로컬 스캔 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-search text-green-600"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">로컬 URL 분석</h4>
+                            <p class="text-gray-600 text-sm">
+                                기본적인 URL 패턴 분석과 위험도 평가는 오프라인에서도 가능합니다.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 스캔 기록 조회 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-history text-blue-600"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">스캔 기록 조회</h4>
+                            <p class="text-gray-600 text-sm">
+                                이전에 스캔했던 URL들의 기록을 로컬에서 확인할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 설정 관리 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-cog text-purple-600"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">설정 관리</h4>
+                            <p class="text-gray-600 text-sm">
+                                앱 설정과 사용자 환경설정을 오프라인에서도 변경할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 도움말 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-question-circle text-yellow-600"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">도움말 및 가이드</h4>
+                            <p class="text-gray-600 text-sm">
+                                캐시된 도움말 문서와 사용 가이드를 확인할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 오프라인 도구 -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h4 class="font-semibold text-gray-900 mb-4">빠른 도구</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        
+                        <button id="offlineUrlCheck" 
+                                class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-link text-2xl text-blue-600 mb-2"></i>
+                            <div class="text-sm font-medium text-gray-900">URL 검사</div>
+                        </button>
+                        
+                        <button id="viewHistory" 
+                                class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-clock text-2xl text-green-600 mb-2"></i>
+                            <div class="text-sm font-medium text-gray-900">기록 보기</div>
+                        </button>
+                        
+                        <button id="offlineSettings" 
+                                class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-sliders-h text-2xl text-purple-600 mb-2"></i>
+                            <div class="text-sm font-medium text-gray-900">설정</div>
+                        </button>
+                        
+                        <button id="offlineHelp" 
+                                class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-info-circle text-2xl text-yellow-600 mb-2"></i>
+                            <div class="text-sm font-medium text-gray-900">도움말</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 연결 상태 정보 -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+            <div class="flex items-start">
+                <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 mr-3"></i>
+                <div>
+                    <h4 class="font-semibold text-yellow-800 mb-2">제한된 기능</h4>
+                    <p class="text-yellow-700 text-sm mb-3">
+                        오프라인 상태에서는 다음 기능들을 사용할 수 없습니다:
+                    </p>
+                    <ul class="text-yellow-700 text-sm space-y-1 ml-4">
+                        <li>• 실시간 위협 데이터베이스 조회</li>
+                        <li>• 새로운 사기 사이트 신고</li>
+                        <li>• 온라인 통계 및 대시보드</li>
+                        <li>• 클라우드 동기화</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 팁 섹션 -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div class="flex items-start">
+                <i class="fas fa-lightbulb text-blue-600 mt-1 mr-3"></i>
+                <div>
+                    <h4 class="font-semibold text-blue-800 mb-2">💡 팁</h4>
+                    <ul class="text-blue-700 text-sm space-y-2">
+                        <li>• Wi-Fi 또는 모바일 데이터 연결을 확인하세요</li>
+                        <li>• 방화벽이나 보안 소프트웨어 설정을 점검하세요</li>
+                        <li>• 브라우저를 새로고침하여 연결을 재시도하세요</li>
+                        <li>• 연결이 복원되면 모든 기능이 자동으로 활성화됩니다</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="text-center text-gray-600 text-sm">
+                <p>&copy; 2024 ClearNet. 온라인 보안을 위한 스마트 솔루션</p>
+                <p class="mt-1">오프라인 모드에서 실행 중</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 오프라인 URL 검사 모달 -->
+    <div id="offlineUrlModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">오프라인 URL 검사</h3>
+                    <button id="closeUrlModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">URL 입력</label>
+                        <input type="url" id="offlineUrlInput" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="검사할 URL을 입력하세요">
+                    </div>
+                    
+                    <div id="offlineUrlResult" class="hidden">
+                        <!-- 결과가 여기에 표시됩니다 -->
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button id="checkOfflineUrl" 
+                                class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            검사하기
+                        </button>
+                        <button id="cancelUrlCheck" 
+                                class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                            취소
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 오프라인 페이지 JavaScript
+        class OfflineManager {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.checkConnectionPeriodically();
+                this.loadOfflineData();
+            }
+
+            setupEventListeners() {
+                // 연결 재시도 버튼
+                document.getElementById('retryConnection').addEventListener('click', () => {
+                    this.retryConnection();
+                });
+
+                // 오프라인 기능 토글
+                document.getElementById('offlineFeaturesToggle').addEventListener('click', () => {
+                    this.toggleOfflineFeatures();
+                });
+
+                // 오프라인 도구들
+                document.getElementById('offlineUrlCheck').addEventListener('click', () => {
+                    this.showUrlCheckModal();
+                });
+
+                document.getElementById('viewHistory').addEventListener('click', () => {
+                    this.showHistory();
+                });
+
+                document.getElementById('offlineSettings').addEventListener('click', () => {
+                    this.showSettings();
+                });
+
+                document.getElementById('offlineHelp').addEventListener('click', () => {
+                    this.showHelp();
+                });
+
+                // 모달 관련
+                document.getElementById('closeUrlModal').addEventListener('click', () => {
+                    this.hideUrlCheckModal();
+                });
+
+                document.getElementById('cancelUrlCheck').addEventListener('click', () => {
+                    this.hideUrlCheckModal();
+                });
+
+                document.getElementById('checkOfflineUrl').addEventListener('click', () => {
+                    this.checkUrlOffline();
+                });
+
+                // 온라인 상태 감지
+                window.addEventListener('online', () => {
+                    this.handleOnline();
+                });
+
+                window.addEventListener('offline', () => {
+                    this.handleOffline();
+                });
+            }
+
+            retryConnection() {
+                const button = document.getElementById('retryConnection');
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>연결 확인 중...';
+
+                // 연결 테스트
+                fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                    .then(() => {
+                        // 온라인 상태로 전환
+                        window.location.href = '/';
+                    })
+                    .catch(() => {
+                        // 여전히 오프라인
+                        setTimeout(() => {
+                            button.disabled = false;
+                            button.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>연결 다시 시도';
+                        }, 1000);
+                    });
+            }
+
+            toggleOfflineFeatures() {
+                const features = document.getElementById('offlineFeatures');
+                const icon = document.getElementById('toggleIcon');
+                
+                features.classList.toggle('expanded');
+                icon.classList.toggle('rotate-180');
+            }
+
+            showUrlCheckModal() {
+                document.getElementById('offlineUrlModal').style.display = 'flex';
+            }
+
+            hideUrlCheckModal() {
+                document.getElementById('offlineUrlModal').style.display = 'none';
+                document.getElementById('offlineUrlInput').value = '';
+                document.getElementById('offlineUrlResult').classList.add('hidden');
+            }
+
+            checkUrlOffline() {
+                const url = document.getElementById('offlineUrlInput').value;
+                const resultDiv = document.getElementById('offlineUrlResult');
+                
+                if (!url) {
+                    alert('URL을 입력해주세요.');
+                    return;
+                }
+
+                // 기본적인 오프라인 URL 검사
+                const result = this.basicUrlAnalysis(url);
+                
+                resultDiv.innerHTML = `
+                    <div class="p-3 bg-gray-50 rounded border">
+                        <div class="font-medium mb-2">기본 분석 결과</div>
+                        <div class="text-sm text-gray-600">
+                            ${result.message}
+                        </div>
+                        <div class="mt-2 text-xs text-yellow-600">
+                            * 오프라인 모드에서는 제한된 분석만 가능합니다
+                        </div>
+                    </div>
+                `;
+                
+                resultDiv.classList.remove('hidden');
+            }
+
+            basicUrlAnalysis(url) {
+                try {
+                    const urlObj = new URL(url);
+                    let suspiciousPatterns = 0;
+                    let warnings = [];
+
+                    // 기본 패턴 검사
+                    if (urlObj.protocol !== 'https:') {
+                        suspiciousPatterns++;
+                        warnings.push('HTTP 연결 (비보안)');
+                    }
+
+                    if (urlObj.hostname.includes('bit.ly') || urlObj.hostname.includes('tinyurl')) {
+                        suspiciousPatterns++;
+                        warnings.push('단축 URL 사용');
+                    }
+
+                    if (urlObj.hostname.match(/\d+\.\d+\.\d+\.\d+/)) {
+                        suspiciousPatterns++;
+                        warnings.push('IP 주소 직접 사용');
+                    }
+
+                    let message = '';
+                    if (suspiciousPatterns === 0) {
+                        message = '기본 검사에서 명백한 위험 요소가 발견되지 않았습니다.';
+                    } else {
+                        message = `${suspiciousPatterns}개의 주의사항이 발견되었습니다: ${warnings.join(', ')}`;
+                    }
+
+                    return { message, suspiciousPatterns };
+                } catch {
+                    return { message: '유효하지 않은 URL입니다.', suspiciousPatterns: 0 };
+                }
+            }
+
+            showHistory() {
+                // 로컬 스토리지에서 기록 로드
+                const history = JSON.parse(localStorage.getItem('clearnet_scans') || '[]');
+                
+                if (history.length === 0) {
+                    alert('저장된 스캔 기록이 없습니다.');
+                    return;
+                }
+
+                const recent = history.slice(-10).reverse();
+                const historyHtml = recent.map(scan => `
+                    <div class="border-b pb-2 mb-2">
+                        <div class="font-medium text-sm">${scan.url}</div>
+                        <div class="text-xs text-gray-600">
+                            위험도: ${scan.risk_score}점 | 
+                            ${new Date(scan.scan_timestamp).toLocaleString('ko-KR')}
+                        </div>
+                    </div>
+                `).join('');
+
+                alert('최근 스캔 기록 (최대 10개):\n\n' + recent.map(scan => 
+                    `${scan.url} (${scan.risk_score}점)`
+                ).join('\n'));
+            }
+
+            showSettings() {
+                alert('오프라인 설정 기능은 개발 중입니다.');
+            }
+
+            showHelp() {
+                alert('ClearNet 도움말\n\n' + 
+                      '• URL 검사: 의심스러운 링크의 안전성을 확인\n' +
+                      '• 실시간 보호: 악성 사이트 자동 차단\n' +
+                      '• 신고 기능: 새로운 위협 신고\n\n' +
+                      '온라인 상태에서 더 많은 기능을 이용할 수 있습니다.');
+            }
+
+            checkConnectionPeriodically() {
+                // 30초마다 연결 상태 확인
+                setInterval(() => {
+                    if (navigator.onLine) {
+                        fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                            .then(() => {
+                                // 온라인으로 리다이렉트
+                                window.location.href = '/';
+                            })
+                            .catch(() => {
+                                // 여전히 오프라인
+                            });
+                    }
+                }, 30000);
+            }
+
+            loadOfflineData() {
+                // 오프라인에서 사용할 수 있는 데이터 로드
+                console.log('오프라인 데이터 로드 완료');
+            }
+
+            handleOnline() {
+                // 온라인 상태로 복귀
+                window.location.href = '/';
+            }
+
+            handleOffline() {
+                // 오프라인 상태 처리
+                console.log('오프라인 상태 감지');
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new OfflineManager();
+        });
+    </script>
+</body>
+</html>
