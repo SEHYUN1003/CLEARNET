@@ -1,0 +1,337 @@
+/* ClearNet 콘텐츠 스크립트 스타일 */
+
+/* 경고 오버레이 */
+#clearnet-warning-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: clearnet-fade-in 0.3s ease-out;
+}
+
+@keyframes clearnet-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.clearnet-warning-modal {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    margin: 0 20px;
+    animation: clearnet-slide-up 0.3s ease-out;
+}
+
+@keyframes clearnet-slide-up {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.clearnet-warning-header {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+}
+
+.clearnet-icon-warning {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.clearnet-warning-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.clearnet-warning-content {
+    padding: 24px;
+    line-height: 1.6;
+}
+
+.clearnet-warning-content p {
+    margin: 0 0 16px 0;
+    color: #374151;
+}
+
+.clearnet-warning-content ul {
+    margin: 12px 0;
+    padding-left: 20px;
+    color: #4b5563;
+}
+
+.clearnet-warning-content li {
+    margin: 8px 0;
+}
+
+.clearnet-warning-actions {
+    padding: 0 24px 24px 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.clearnet-btn-danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    min-width: 120px;
+    transition: background 0.2s;
+}
+
+.clearnet-btn-danger:hover {
+    background: #b91c1c;
+}
+
+.clearnet-btn-secondary {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    min-width: 120px;
+    transition: background 0.2s;
+}
+
+.clearnet-btn-secondary:hover {
+    background: #4b5563;
+}
+
+.clearnet-btn-primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    min-width: 120px;
+    transition: background 0.2s;
+}
+
+.clearnet-btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.clearnet-warning-footer {
+    text-align: center;
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 0 0 12px 12px;
+}
+
+.clearnet-warning-footer small {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* 필드 경고 */
+.clearnet-field-warning {
+    background: white;
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: clearnet-bounce-in 0.3s ease-out;
+}
+
+@keyframes clearnet-bounce-in {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.clearnet-field-warning-password {
+    border-color: #dc2626;
+}
+
+.clearnet-field-warning-payment {
+    border-color: #7c2d12;
+}
+
+.clearnet-field-warning-personal {
+    border-color: #b91c1c;
+}
+
+.clearnet-field-warning-content {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.clearnet-warning-icon {
+    font-size: 1.2rem;
+}
+
+.clearnet-field-warning-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #6b7280;
+    margin-left: auto;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clearnet-field-warning-close:hover {
+    color: #374151;
+}
+
+/* 폼 차단 경고 */
+#clearnet-form-block-warning {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    animation: clearnet-slide-in-right 0.3s ease-out;
+}
+
+@keyframes clearnet-slide-in-right {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.clearnet-form-block-modal {
+    background: white;
+    border: 2px solid #dc2626;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    max-width: 300px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.clearnet-form-block-modal h3 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    color: #dc2626;
+}
+
+.clearnet-form-block-modal p {
+    margin: 0 0 16px 0;
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+#clearnet-form-block-ok {
+    width: 100%;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 640px) {
+    .clearnet-warning-modal {
+        margin: 0 10px;
+        width: calc(100% - 20px);
+    }
+    
+    .clearnet-warning-actions {
+        flex-direction: column;
+    }
+    
+    .clearnet-warning-actions button {
+        width: 100%;
+        margin: 4px 0;
+    }
+    
+    .clearnet-field-warning {
+        position: fixed !important;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: 20px !important;
+        top: auto !important;
+        width: auto !important;
+    }
+    
+    #clearnet-form-block-warning {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .clearnet-warning-modal {
+        background: #1f2937;
+        color: white;
+    }
+    
+    .clearnet-warning-content p {
+        color: #d1d5db;
+    }
+    
+    .clearnet-warning-content ul {
+        color: #9ca3af;
+    }
+    
+    .clearnet-warning-footer {
+        background: #111827;
+        border-color: #374151;
+    }
+    
+    .clearnet-field-warning {
+        background: #1f2937;
+        color: white;
+    }
+    
+    .clearnet-form-block-modal {
+        background: #1f2937;
+        color: white;
+    }
+}
+
+/* 접근성 향상 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+    .clearnet-warning-modal {
+        border: 3px solid #000000;
+    }
+    
+    .clearnet-field-warning {
+        border-width: 3px;
+    }
+    
+    .clearnet-btn-danger,
+    .clearnet-btn-primary,
+    .clearnet-btn-secondary {
+        border: 2px solid #000000;
+    }
+}
