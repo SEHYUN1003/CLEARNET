@@ -1,0 +1,60 @@
+{
+  "name": "ClearNet - 온라인 보안 도우미",
+  "short_name": "ClearNet",
+  "description": "피싱, 스캠, 악성 링크를 실시간으로 탐지하고 차단하는 모바일 보안 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+
+  "icons": [
+    { "src": "icons/icon-72x72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "icons/icon-128x128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "icons/icon-144x144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "icons/icon-152x152.png", "sizes": "152x152", "type": "image/png" },
+    { "src": "icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-384x384.png", "sizes": "384x384", "type": "image/png" },
+    { "src": "icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+
+  "categories": ["security", "utilities"],
+  "lang": "ko",
+
+  "screenshots": [
+    {
+      "src": "screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "URL 검사 화면"
+    },
+    {
+      "src": "screenshots/mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "신고 화면"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "URL 검사",
+      "short_name": "검사",
+      "description": "의심스러운 URL 안전성 검사",
+      "url": "/index.html#scanner",
+      "icons": [{ "src": "icons/shortcut-scan.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "신고하기",
+      "short_name": "신고",
+      "description": "악성 사이트 신고",
+      "url": "/index.html#report",
+      "icons": [{ "src": "icons/shortcut-report.png", "sizes": "96x96" }]
+    }
+  ],
+
+  "features": ["Cross Platform", "fast", "simple"]
+}
