@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>위험한 사이트 차단됨 - ClearNet</title>
+    
+    <!-- PWA 메타태그 -->
+    <meta name="theme-color" content="#DC2626">
+    <meta name="description" content="ClearNet에 의해 위험한 사이트가 차단되었습니다">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .danger-pulse {
+            animation: danger-pulse 2s infinite;
+        }
+        
+        @keyframes danger-pulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+        
+        .warning-blink {
+            animation: warning-blink 1s infinite;
+        }
+        
+        @keyframes warning-blink {
+            0%, 50% { background-color: #DC2626; }
+            51%, 100% { background-color: #EF4444; }
+        }
+        
+        .slide-in-top {
+            animation: slide-in-top 0.5s ease-out;
+        }
+        
+        @keyframes slide-in-top {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .bounce-in {
+            animation: bounce-in 0.8s ease-out;
+        }
+        
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            70% {
+                transform: scale(0.9);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .progress-bar {
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .threat-level-critical {
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+        }
+        
+        .threat-level-high {
+            background: linear-gradient(135deg, #EA580C, #DC2626);
+        }
+        
+        .threat-level-medium {
+            background: linear-gradient(135deg, #D97706, #EA580C);
+        }
+    </style>
+</head>
+<body class="bg-red-50 min-h-screen">
+    
+    <!-- 경고 헤더 -->
+    <header class="warning-blink text-white py-3">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex items-center justify-center">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span class="font-bold text-sm">⚠️ 위험한 사이트가 차단되었습니다 ⚠️</span>
+                <i class="fas fa-exclamation-triangle ml-2"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- 차단 알림 카드 -->
+        <div class="slide-in-top bg-white rounded-xl shadow-2xl border-2 border-red-200 overflow-hidden mb-8">
+            
+            <!-- 헤더 섹션 -->
+            <div class="bg-red-600 text-white p-6 text-center">
+                <div class="bounce-in">
+                    <i class="fas fa-shield-alt text-6xl mb-4 danger-pulse"></i>
+                    <h1 class="text-3xl font-bold mb-2">사이트 접근 차단</h1>
+                    <p class="text-red-100">ClearNet이 귀하의 보안을 위해 이 사이트를 차단했습니다</p>
+                </div>
+            </div>
+            
+            <!-- 위험 정보 섹션 -->
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold mb-4">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span id="threatLevel">높은 위험도</span>
+                    </div>
+                    
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">차단된 사이트</h2>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+                        <div class="flex items-center justify-center space-x-2">
+                            <i class="fas fa-link text-gray-500"></i>
+                            <code id="blockedUrl" class="text-red-600 font-mono break-all">
+                                <!-- URL이 여기에 표시됩니다 -->
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 위험 요소 -->
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+                    <h3 class="font-bold text-red-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        발견된 위험 요소
+                    </h3>
+                    <div id="riskFactors" class="space-y-2">
+                        <!-- 위험 요소들이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+                
+                <!-- 위험도 게이지 -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-gray-900 mb-4 text-center">위험도 평가</h3>
+                    <div class="relative">
+                        <div class="w-full bg-gray-200 rounded-full h-6">
+                            <div id="riskMeter" class="progress-bar h-6 rounded-full flex items-center justify-end pr-2">
+                                <span id="riskScore" class="text-white text-sm font-bold"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-600 mt-1">
+                            <span>안전</span>
+                            <span>보통</span>
+                            <span>위험</span>
+                            <span>매우 위험</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 보안 권장사항 -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                    <h3 class="font-bold text-blue-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        보안 권장사항
+                    </h3>
+                    <ul class="text-blue-700 space-y-2 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                            <span>이 사이트를 방문하지 마세요</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                            <span>개인정보나 비밀번호를 입력하지 마세요</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                            <span>의심스러운 파일을 다운로드하지 마세요</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
+                            <span>안전한 사이트로 이동하세요</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 액션 버튼들 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- 안전한 곳으로 돌아가기 -->
+                    <button id="goBack" 
+                            class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        안전하게 돌아가기
+                    </button>
+                    
+                    <!-- 홈페이지로 이동 -->
+                    <button id="goHome" 
+                            class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center">
+                        <i class="fas fa-home mr-2"></i>
+                        홈페이지로
+                    </button>
+                    
+                    <!-- 사이트 신고 -->
+                    <button id="reportSite" 
+                            class="bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center justify-center">
+                        <i class="fas fa-flag mr-2"></i>
+                        사이트 신고
+                    </button>
+                </div>
+                
+                <!-- 고급 사용자 옵션 -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <details class="group">
+                        <summary class="cursor-pointer text-gray-600 hover:text-gray-800 text-sm font-medium flex items-center">
+                            <i class="fas fa-cog mr-2"></i>
+                            고급 옵션
+                            <i class="fas fa-chevron-down ml-2 transform group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        
+                        <div class="mt-4 space-y-4">
+                            <!-- 강제 접속 경고 -->
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <div class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 mt-1"></i>
+                                    <div>
+                                        <h4 class="font-semibold text-yellow-800 mb-2">⚠️ 위험 인지 후 접속</h4>
+                                        <p class="text-yellow-700 text-sm mb-3">
+                                            모든 위험을 인지하고도 이 사이트에 접속하시겠습니까?<br>
+                                            <strong>개인정보 유출, 악성코드 감염, 금융 피해</strong> 등이 발생할 수 있습니다.
+                                        </p>
+                                        
+                                        <div class="space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" id="acknowledgeRisk" class="mr-2">
+                                                <span class="text-sm text-yellow-800">위험을 충분히 인지했습니다</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" id="acceptResponsibility" class="mr-2">
+                                                <span class="text-sm text-yellow-800">모든 책임은 본인에게 있습니다</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <button id="proceedAnyway" 
+                                                class="mt-3 bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                                disabled>
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            위험을 무릅쓰고 접속
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 차단 해제 요청 -->
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">🤔 이 사이트가 안전하다고 생각하시나요?</h4>
+                                <p class="text-gray-600 text-sm mb-3">
+                                    잘못된 차단이라고 판단되시면 검토 요청을 보내주세요.
+                                </p>
+                                <button id="requestReview" 
+                                        class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 transition-colors">
+                                    <i class="fas fa-search mr-1"></i>
+                                    재검토 요청
+                                </button>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 통계 정보 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <i class="fas fa-shield-alt text-3xl text-green-600 mb-3"></i>
+                <div class="text-2xl font-bold text-gray-900" id="totalBlocked">0</div>
+                <div class="text-sm text-gray-600">총 차단된 사이트</div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <i class="fas fa-users-shield text-3xl text-blue-600 mb-3"></i>
+                <div class="text-2xl font-bold text-gray-900" id="usersProtected">0</div>
+                <div class="text-sm text-gray-600">보호된 사용자</div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <i class="fas fa-clock text-3xl text-purple-600 mb-3"></i>
+                <div class="text-2xl font-bold text-gray-900" id="todayBlocks">0</div>
+                <div class="text-sm text-gray-600">오늘 차단 수</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                <span class="font-semibold text-gray-900">ClearNet 보안 서비스</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-2">
+                24시간 실시간 위협 탐지 및 차단 서비스
+            </p>
+            <p class="text-gray-500 text-xs">
+                &copy; 2024 ClearNet. 모든 권리 보유.
+            </p>
+        </div>
+    </footer>
+
+    <!-- 신고 모달 -->
+    <div id="reportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">사이트 신고</h3>
+                    <button id="closeReportModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">추가 정보</label>
+                        <textarea id="reportDetails" rows="3" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder="이 사이트에 대한 추가 정보를 입력해주세요..."></textarea>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button id="submitReport" 
+                                class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            신고 제출
+                        </button>
+                        <button id="cancelReport" 
+                                class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                            취소
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 차단 페이지 JavaScript
+        class BlockPageManager {
+            constructor() {
+                this.blockedUrl = '';
+                this.threatData = null;
+                this.init();
+            }
+
+            init() {
+                this.loadBlockedSiteInfo();
+                this.setupEventListeners();
+                this.loadStatistics();
+                this.updateUI();
+            }
+
+            loadBlockedSiteInfo() {
+                // URL 파라미터에서 차단된 사이트 정보 로드
+                const urlParams = new URLSearchParams(window.location.search);
+                this.blockedUrl = urlParams.get('url') || 'example-malicious-site.com';
+                
+                const riskScore = parseInt(urlParams.get('risk')) || 85;
+                const threatType = urlParams.get('type') || 'phishing';
+                
+                // 위협 데이터 설정
+                this.threatData = {
+                    url: this.blockedUrl,
+                    riskScore: riskScore,
+                    threatType: threatType,
+                    factors: this.generateRiskFactors(threatType, riskScore)
+                };
+            }
+
+            generateRiskFactors(type, score) {
+                const factors = [];
+                
+                if (score >= 90) {
+                    factors.push('알려진 악성 사이트 데이터베이스에 등록됨');
+                }
+                
+                if (type === 'phishing') {
+                    factors.push('피싱 사이트 패턴 탐지');
+                    factors.push('개인정보 탈취 시도 감지');
+                }
+                
+                if (score >= 80) {
+                    factors.push('의심스러운 도메인 구조');
+                    factors.push('SSL 인증서 문제');
+                }
+                
+                if (score >= 70) {
+                    factors.push('단축 URL 또는 리다이렉션 사용');
+                    factors.push('악성 스크립트 탐지');
+                }
+                
+                return factors;
+            }
+
+            updateUI() {
+                // 차단된 URL 표시
+                document.getElementById('blockedUrl').textContent = this.threatData.url;
+                
+                // 위험 등급 설정
+                this.updateThreatLevel();
+                
+                // 위험 요소 표시
+                this.displayRiskFactors();
+                
+                // 위험도 게이지 업데이트
+                this.updateRiskMeter();
+            }
+
+            updateThreatLevel() {
+                const levelElement = document.getElementById('threatLevel');
+                const score = this.threatData.riskScore;
+                
+                if (score >= 90) {
+                    levelElement.textContent = '매우 높은 위험도';
+                    levelElement.className = 'inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold mb-4';
+                } else if (score >= 70) {
+                    levelElement.textContent = '높은 위험도';
+                    levelElement.className = 'inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold mb-4';
+                } else {
+                    levelElement.textContent = '보통 위험도';
+                    levelElement.className = 'inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold mb-4';
+                }
+            }
+
+            displayRiskFactors() {
+                const container = document.getElementById('riskFactors');
+                container.innerHTML = '';
+                
+                this.threatData.factors.forEach(factor => {
+                    const factorElement = document.createElement('div');
+                    factorElement.className = 'flex items-start text-red-700 text-sm';
+                    factorElement.innerHTML = `
+                        <i class="fas fa-exclamation-circle text-red-500 mr-2 mt-0.5 flex-shrink-0"></i>
+                        <span>${factor}</span>
+                    `;
+                    container.appendChild(factorElement);
+                });
+            }
+
+            updateRiskMeter() {
+                const meter = document.getElementById('riskMeter');
+                const scoreElement = document.getElementById('riskScore');
+                const score = this.threatData.riskScore;
+                
+                // 점수 표시
+                scoreElement.textContent = score + '%';
+                
+                // 프로그레스 바 색상 및 너비 설정
+                setTimeout(() => {
+                    meter.style.width = score + '%';
+                    
+                    if (score >= 90) {
+                        meter.className = 'progress-bar h-6 rounded-full flex items-center justify-end pr-2 threat-level-critical';
+                    } else if (score >= 70) {
+                        meter.className = 'progress-bar h-6 rounded-full flex items-center justify-end pr-2 threat-level-high';
+                    } else {
+                        meter.className = 'progress-bar h-6 rounded-full flex items-center justify-end pr-2 threat-level-medium';
+                    }
+                }, 500);
+            }
+
+            setupEventListeners() {
+                // 돌아가기 버튼
+                document.getElementById('goBack').addEventListener('click', () => {
+                    window.history.back();
+                });
+                
+                // 홈페이지 버튼
+                document.getElementById('goHome').addEventListener('click', () => {
+                    window.location.href = '/';
+                });
+                
+                // 신고 버튼
+                document.getElementById('reportSite').addEventListener('click', () => {
+                    this.showReportModal();
+                });
+                
+                // 강제 접속 체크박스
+                const checkboxes = ['acknowledgeRisk', 'acceptResponsibility'];
+                checkboxes.forEach(id => {
+                    document.getElementById(id).addEventListener('change', () => {
+                        this.updateProceedButton();
+                    });
+                });
+                
+                // 강제 접속 버튼
+                document.getElementById('proceedAnyway').addEventListener('click', () => {
+                    this.proceedToSite();
+                });
+                
+                // 재검토 요청 버튼
+                document.getElementById('requestReview').addEventListener('click', () => {
+                    this.requestReview();
+                });
+                
+                // 모달 관련
+                document.getElementById('closeReportModal').addEventListener('click', () => {
+                    this.hideReportModal();
+                });
+                
+                document.getElementById('cancelReport').addEventListener('click', () => {
+                    this.hideReportModal();
+                });
+                
+                document.getElementById('submitReport').addEventListener('click', () => {
+                    this.submitReport();
+                });
+            }
+
+            updateProceedButton() {
+                const risk = document.getElementById('acknowledgeRisk').checked;
+                const responsibility = document.getElementById('acceptResponsibility').checked;
+                const button = document.getElementById('proceedAnyway');
+                
+                button.disabled = !(risk && responsibility);
+            }
+
+            proceedToSite() {
+                const confirmed = confirm(
+                    '⚠️ 최종 경고 ⚠️\n\n' +
+                    '이 사이트는 매우 위험할 수 있습니다.\n' +
+                    '개인정보 유출, 악성코드 감염, 금융 피해가 발생할 수 있습니다.\n\n' +
+                    '정말로 접속하시겠습니까?'
+                );
+                
+                if (confirmed) {
+                    // 경고 로그 기록
+                    this.logForcedAccess();
+                    
+                    // 사이트로 이동 (3초 후)
+                    const countdown = 3;
+                    let current = countdown;
+                    
+                    const button = document.getElementById('proceedAnyway');
+                    const originalText = button.innerHTML;
+                    
+                    const timer = setInterval(() => {
+                        button.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i>${current}초 후 이동...`;
+                        current--;
+                        
+                        if (current < 0) {
+                            clearInterval(timer);
+                            window.location.href = this.threatData.url;
+                        }
+                    }, 1000);
+                }
+            }
+
+            logForcedAccess() {
+                // 강제 접속 로그 기록
+                const logData = {
+                    url: this.threatData.url,
+                    riskScore: this.threatData.riskScore,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    forced: true
+                };
+                
+                // 로컬 스토리지에 저장
+                const logs = JSON.parse(localStorage.getItem('clearnet_forced_access') || '[]');
+                logs.push(logData);
+                localStorage.setItem('clearnet_forced_access', JSON.stringify(logs));
+            }
+
+            requestReview() {
+                const reason = prompt('재검토 요청 사유를 입력해주세요:', '이 사이트는 안전합니다');
+                
+                if (reason) {
+                    // 재검토 요청 제출
+                    alert('재검토 요청이 제출되었습니다.\n24시간 내에 검토 결과를 알려드리겠습니다.');
+                    
+                    // 실제로는 서버에 요청 전송
+                    console.log('재검토 요청:', {
+                        url: this.threatData.url,
+                        reason: reason,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            }
+
+            showReportModal() {
+                document.getElementById('reportModal').style.display = 'flex';
+            }
+
+            hideReportModal() {
+                document.getElementById('reportModal').style.display = 'none';
+                document.getElementById('reportDetails').value = '';
+            }
+
+            submitReport() {
+                const details = document.getElementById('reportDetails').value;
+                
+                // 신고 제출
+                alert('신고가 접수되었습니다.\n제공해주신 정보를 바탕으로 데이터베이스를 업데이트하겠습니다.');
+                
+                // 실제로는 서버에 신고 전송
+                console.log('사이트 신고:', {
+                    url: this.threatData.url,
+                    details: details,
+                    timestamp: new Date().toISOString()
+                });
+                
+                this.hideReportModal();
+            }
+
+            loadStatistics() {
+                // 임시 통계 데이터 (실제로는 API에서 로드)
+                const stats = {
+                    totalBlocked: Math.floor(Math.random() * 10000) + 50000,
+                    usersProtected: Math.floor(Math.random() * 5000) + 25000,
+                    todayBlocks: Math.floor(Math.random() * 100) + 150
+                };
+                
+                // 애니메이션과 함께 숫자 업데이트
+                this.animateCounter('totalBlocked', stats.totalBlocked);
+                this.animateCounter('usersProtected', stats.usersProtected);
+                this.animateCounter('todayBlocks', stats.todayBlocks);
+            }
+
+            animateCounter(elementId, targetValue) {
+                const element = document.getElementById(elementId);
+                const duration = 2000; // 2초
+                const steps = 60;
+                const stepValue = targetValue / steps;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += stepValue;
+                    if (current >= targetValue) {
+                        current = targetValue;
+                        clearInterval(timer);
+                    }
+                    
+                    element.textContent = Math.floor(current).toLocaleString();
+                }, duration / steps);
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new BlockPageManager();
+        });
+    </script>
+</body>
+</html>
